@@ -106,9 +106,7 @@ class BeneficiariesListAPI(Resource):
 
             refugee = include_balances(conn, sql, params)
 
-            return {
-                'beneficiaries': marshal(refugee, refugee_fields)
-            }, 200
+            return marshal(refugee, refugee_fields), 200
 
         except Exception as e:
             return {'error': str(e)}
@@ -183,29 +181,28 @@ class RefugeeListAPI(Resource):
             params = don_id
 
             preferences = {
-                'gender': request.args.getlist('gender')[0],
-                'age_group': request.args.getlist('age_group')[0],
-                'familial_status': request.args.getlist('familial_status')[0],
-                'disability': request.args.getlist('disability')[0],
-                'dependencies': request.args.getlist('dependencies')[0]
+                'gender': request.args.getlist('gender'),
+                'age_group': request.args.getlist('age_group'),
+                'familial_status': request.args.getlist('familial_status'),
+                'disability': request.args.getlist('disability'),
+                'dependencies': request.args.getlist('dependencies')
             }
 
             sql = u"select distinct refugee.ref_id, refugee.name, refugee.gender, refugee.age_group, " \
                   u"refugee.familial_status, refugee.disability, refugee.dependencies from refugee " \
-                  u"left join (select * from beneficiaries where not beneficiaries.don_id=?) as b " \
-                  u"on b.ref_id = refugee.ref_id " \
-                  u"where"
+                  u"left join beneficiaries on beneficiaries.ref_id = refugee.ref_id " \
+                  u"where not beneficiaries.don_id=? and "
 
             for k in preferences:
-                if preferences[k] != 'None':
-                    sql = sql + u" refugee." + k + u"=" + preferences[k] + u" and "
+                if not preferences[k]:
+                    pass
+                else:
+                    sql = sql + u"refugee." + k + u"=" + preferences[k][0] + u" and "
             sql = sql[:-5] + u";"
 
             refugee = include_balances(conn, sql, params)
 
-            return {
-                       'beneficiaries': marshal(refugee, refugee_fields)
-            }, 200
+            return marshal(refugee, refugee_fields), 200
 
         except Exception as e:
             return {'error': str(e)}
