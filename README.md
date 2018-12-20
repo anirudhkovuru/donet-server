@@ -1,7 +1,6 @@
 # Server
-The RESTful API of the Donet App. Run api.py
 
-Each doner has an don_id. That will show up in every API call.  
+The RESTful API of the Donet App. Run run.py 
 
 ## GET calls
 
