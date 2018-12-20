@@ -9,11 +9,12 @@ Authorization header with the access token is required for both requests.
 
 ### For list of beneficiaries to which doner has donated to
    
-/api/v2.0/beneficiaries  
+api/v2.0/beneficiaries  
 
 ### For list of refugees to which doner has not donated to along with preferences
 
-/api/v2.0/refugee?<query_params>  
+api/v2.0/refugee?<query_params>  
+
 query_params = gender, age_group, familial_status, disability, dependencies  
 
 Example :- api/v2.0/refugee?gender=0
