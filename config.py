@@ -1,5 +1,6 @@
 DEBUG = True
 PORT = 8080
+SECRET_KEY = "leap-of-faith"
 
 server = 'tcp:donet.database.windows.net'
 database = 'donet-database'
