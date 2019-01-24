@@ -322,16 +322,18 @@ class RefugeeListAPI(Resource):
                 'dependencies': request.args.getlist('dependencies')
             }
 
-            sql = u"select distinct refugee.ref_id, refugee.name, refugee.gender, refugee.age_group, " \
-                  u"refugee.familial_status, refugee.disability, refugee.dependencies from refugee " \
-                  u"left join beneficiaries on beneficiaries.ref_id = refugee.ref_id " \
-                  u"where not beneficiaries.don_id=? and "
+            sql = u"select t.ref_id, t.name, t.gender, t.age_group, t.familial_status, t.disability " \
+                  u"from (select refugee.ref_id, refugee.name, refugee.gender, refugee.age_group, " \
+                  u"refugee.familial_status, refugee.disability, " \
+                  u"refugee.dependencies, beneficiaries.don_id from refugee " \
+                  u"left join beneficiaries on beneficiaries.ref_id = refugee.ref_id) as t " \
+                  u"where t.don_id != ? or t.don_id is NULL and "
 
             for k in preferences:
                 if not preferences[k]:
                     pass
                 else:
-                    sql = sql + u"refugee." + k + u"=" + preferences[k][0] + u" and "
+                    sql = sql + u"t." + k + u"=" + preferences[k][0] + u" and "
             sql = sql[:-5] + u";"
 
             refugee = conn.include_balances(sql, params)
